@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>StudySprint — Your study plan, made clear</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="/"><span class="brand-mark">S</span> StudySprint</a>
+    <span class="nav-note">STUDENT PLANNER <i></i></span>
+  </nav>
+  <main class="layout">
+    <section class="hero">
+      <div class="eyebrow"><span class="spark">✦</span> YOUR NEXT CHAPTER STARTS HERE</div>
+      <h1>Less panic.<br><span>More progress.</span></h1>
+      <p class="hero-copy">Turn your syllabus into a plan you can actually follow. Add your exam details and let StudySprint map the next steps.</p>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <div class="sun">✳</div>
+        <div class="art-card card-a"><span class="mini-icon purple">✓</span><div><b>Small steps</b><small>Big difference</small></div></div>
+        <div class="art-card card-b"><span class="mini-icon lime">↗</span><div><b>Keep moving</b><small>One topic at a time</small></div></div>
+        <div class="art-label">YOUR PACE. YOUR PLAN.</div>
+      </div>
+      <div class="hero-foot"><span class="dot"></span> Built for students, not perfect schedules.</div>
+    </section>
+
+    <section class="workspace">
+      <div class="form-head">
+        <div><div class="step-label">01 / YOUR DETAILS</div><h2>Build your study plan</h2><p>Fill in the details below to see your progress.</p></div>
+        <div class="number-stamp">01</div>
+      </div>
+      {% if error %}<div class="alert" role="alert"><b>Check your details</b><span>{{ error }}</span></div>{% endif %}
+      <form method="post" action="/" id="planner-form">
+        <div class="field">
+          <label for="name">Your name</label>
+          <input id="name" name="name" type="text" maxlength="70" placeholder="e.g. Kesavan" value="{{ request.form.get('name', '') }}" required>
+        </div>
+        <div class="field">
+          <label for="subject">Subject / course</label>
+          <input id="subject" name="subject" type="text" maxlength="90" placeholder="e.g. Deep Learning" value="{{ request.form.get('subject', '') }}" required>
+        </div>
+        <div class="two-col">
+          <div class="field"><label for="total_topics">Total topics</label><input id="total_topics" name="total_topics" type="number" min="1" max="500" placeholder="12" value="{{ request.form.get('total_topics', '') }}" required></div>
+          <div class="field"><label for="completed_topics">Topics completed</label><input id="completed_topics" name="completed_topics" type="number" min="0" placeholder="4" value="{{ request.form.get('completed_topics', '') }}" required></div>
+        </div>
+        <div class="two-col">
+          <div class="field"><label for="exam_date">Exam date</label><input id="exam_date" name="exam_date" type="date" min="{{ today }}" value="{{ request.form.get('exam_date', '') }}" required></div>
+          <div class="field"><label for="hours_per_day">Study hours / day</label><input id="hours_per_day" name="hours_per_day" type="number" min="0.5" max="24" step="0.5" placeholder="2" value="{{ request.form.get('hours_per_day', '') }}" required></div>
+        </div>
+        <button class="submit" type="submit">Create my plan <span>↗</span></button>
+        <p class="privacy-note"><span>◇</span> Your entries are used for this calculation only. This demo does not save them to a database.</p>
+      </form>
+      {% if result %}
+      <section class="result" aria-live="polite">
+        <div class="result-top"><div><div class="step-label">02 / YOUR STUDY SNAPSHOT</div><h2>You're in, {{ result.name }}.</h2><p>{{ result.subject }} · Exam on {{ result.exam_date }}</p></div><span class="status">{{ result.status }}</span></div>
+        <div class="progress-fill" data-progress="{{ result.progress }}"></div>
+        <div class="metrics">
+          <div class="metric"><small>Topics left</small><strong>{{ result.remaining }}</strong></div>
+          <div class="metric"><small>Days left</small><strong>{{ result.days_left }}</strong></div>
+          <div class="metric"><small>Daily target</small><strong>{{ result.topics_per_day }}</strong><small>topics / day</small></div>
+        </div>
+        <div class="tip"><span class="tip-icon">✦</span><div><b>Your next move</b><p>{{ result.advice }}</p><small>You planned {{ result.hours_per_day }} study hours per day.</small></div></div>
+      </section>
+      {% endif %}
+    </section>
+  </main>
+  <footer><span>StudySprint</span><span>Small steps count. Keep going.</span><span>FULL-STACK STUDENT PROJECT</span></footer>
+</body>
+</html>
